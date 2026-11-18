@@ -528,6 +528,48 @@ namespace TechMarrket.Migrations
                     b.ToTable("ProductVariants");
                 });
 
+            modelBuilder.Entity("TechMarket.Models.ShippingAddress", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("AddressName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("ReceiverName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ShippingAddresses", (string)null);
+                });
+
             modelBuilder.Entity("TechMarket.Models.Store", b =>
                 {
                     b.Property<int>("Id")
@@ -602,7 +644,7 @@ namespace TechMarrket.Migrations
                     b.HasIndex("OrderId", "StoreId")
                         .IsUnique();
 
-                    b.ToTable("StoreOrder");
+                    b.ToTable("StoreOrder", (string)null);
                 });
 
             modelBuilder.Entity("TechMarket.Models.StoreRegistrationRequest", b =>
@@ -790,6 +832,17 @@ namespace TechMarrket.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("TechMarket.Models.ShippingAddress", b =>
+                {
+                    b.HasOne("TechMarket.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TechMarket.Models.StoreOrder", b =>

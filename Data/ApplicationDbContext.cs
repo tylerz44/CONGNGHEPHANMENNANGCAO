@@ -44,10 +44,45 @@ namespace TechMarket.Data
         public DbSet<StoreOrder> StoreOrders { get; set; }
         // Chi tiết đơn hàng
         public DbSet<OrderDetail> OrderDetails { get; set; }
+        // Quản lý địa chỉ nhận hàng
+        public DbSet<ShippingAddress> ShippingAddresses { get; set; }
         protected override void OnModelCreating(
             ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            // =====================================
+            // CẤU HÌNH SHIPPING ADDRESS
+            // =====================================
+
+            modelBuilder.Entity<ShippingAddress>(entity =>
+            {
+                entity.ToTable("ShippingAddresses");
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.AddressName)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(x => x.ReceiverName)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(x => x.Phone)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(x => x.Address)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.HasOne(x => x.User)
+                    .WithMany()
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(x => x.UserId);
+            });
 
             modelBuilder.Entity<StoreOrder>(entity =>
             {

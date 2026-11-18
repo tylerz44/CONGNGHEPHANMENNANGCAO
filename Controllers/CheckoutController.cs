@@ -33,12 +33,19 @@ namespace TechMarket.Controllers
         }
 
         // Chuẩn bị dữ liệu hiển thị trên trang thanh toán
-        private void PrepareCheckoutView(Cart cart)
+        private async Task PrepareCheckoutView(Cart cart, string userId)
         {
             ViewBag.CartItems = cart.CartItems;
 
             ViewBag.TotalAmount = cart.CartItems.Sum(
                 item => item.Product!.Price * item.Quantity);
+
+            // Lấy danh sách địa chỉ đã lưu của khách hàng
+            ViewBag.ShippingAddresses = await _context.ShippingAddresses
+                .Where(a => a.UserId == userId)
+                .OrderByDescending(a => a.IsDefault)
+                .ThenByDescending(a => a.Id)
+                .ToListAsync();
         }
 
         // GET: Checkout/Index
@@ -77,9 +84,23 @@ namespace TechMarket.Controllers
                 }
             }
 
-            PrepareCheckoutView(cart);
+            await PrepareCheckoutView(cart, userId);
 
-            return View(new CheckoutViewModel());
+            // Tự động lấy địa chỉ mặc định
+            var defaultAddress = await _context.ShippingAddresses
+                .FirstOrDefaultAsync(a =>
+                    a.UserId == userId && a.IsDefault);
+
+            var model = new CheckoutViewModel();
+
+            if (defaultAddress != null)
+            {
+                model.ReceiverName = defaultAddress.ReceiverName;
+                model.Phone = defaultAddress.Phone;
+                model.ShippingAddress = defaultAddress.Address;
+            }
+
+            return View(model);
         }
 
         // POST: Checkout/PlaceOrder
@@ -114,7 +135,7 @@ namespace TechMarket.Controllers
 
             if (!ModelState.IsValid)
             {
-                PrepareCheckoutView(cart);
+                await PrepareCheckoutView(cart, userId);
                 return View("Index", model);
             }
 
@@ -190,7 +211,6 @@ namespace TechMarket.Controllers
                         ProductVariantId = variant.Id,
                         StoreId = product.StoreId,
 
-                        // Lưu thông tin sản phẩm tại thời điểm mua
                         ProductName = product.Name,
                         SKU = variant.SKU,
                         Size = variant.Size,

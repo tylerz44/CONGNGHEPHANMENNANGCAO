@@ -4186,11 +4186,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\code\\Tech_Marrket\\Tech_Marrket.csproj",
+      "projectUniqueName": "C:\\code\\Tech_Market\\Tech_Marrket.csproj",
       "projectName": "Tech_Marrket",
-      "projectPath": "C:\\code\\Tech_Marrket\\Tech_Marrket.csproj",
+      "projectPath": "C:\\code\\Tech_Market\\Tech_Marrket.csproj",
       "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
-      "outputPath": "C:\\code\\Tech_Marrket\\obj\\",
+      "outputPath": "C:\\code\\Tech_Market\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

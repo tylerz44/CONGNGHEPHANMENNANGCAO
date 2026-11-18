@@ -1,70 +1,50 @@
 ﻿@{
-    ViewData["Title"] = "Quản trị hệ thống";
+    ViewData["Title"] = "Admin Dashboard";
 }
 
 <style>
     .admin-dashboard {
+        background: #f5f7fb;
         min-height: 75vh;
-        background: #f5f6fa;
-        padding: 35px 0 50px;
+        padding: 35px 0;
     }
 
     .admin-header {
-        background: linear-gradient(135deg, #171717, #343434);
+        background: linear-gradient(135deg, #212529, #343a40);
         color: white;
         padding: 30px;
-        border-radius: 16px;
-        border-left: 5px solid #ffc107;
+        border-radius: 15px;
+        margin-bottom: 30px;
     }
 
-    .admin-header h2 {
-        font-weight: 700;
-    }
+        .admin-header h2 {
+            font-weight: 700;
+        }
 
     .admin-card {
         background: white;
         border: none;
-        border-radius: 14px;
+        border-radius: 15px;
         padding: 25px;
         height: 100%;
-        box-shadow: 0 4px 15px rgba(0,0,0,.06);
-        transition: .25s;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        transition: 0.25s;
     }
 
-    .admin-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 22px rgba(0,0,0,.12);
-    }
+        .admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
 
     .admin-icon {
-        width: 55px;
-        height: 55px;
-        border-radius: 12px;
+        width: 60px;
+        height: 60px;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 25px;
+        font-size: 28px;
         margin-bottom: 18px;
-    }
-
-    .icon-yellow {
-        background: #fff3cd;
-        color: #b88600;
-    }
-
-    .icon-blue {
-        background: #dbeafe;
-        color: #2563eb;
-    }
-
-    .icon-green {
-        background: #d1fae5;
-        color: #059669;
-    }
-
-    .icon-purple {
-        background: #ede9fe;
-        color: #7c3aed;
     }
 
     .admin-card h5 {
@@ -77,91 +57,79 @@
         min-height: 48px;
     }
 
+    .admin-card .btn {
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    .icon-blue {
+        background: #e7f1ff;
+        color: #0d6efd;
+    }
+
+    .icon-green {
+        background: #e5f7ed;
+        color: #198754;
+    }
+
+    .icon-orange {
+        background: #fff0df;
+        color: #fd7e14;
+    }
+
+    .icon-purple {
+        background: #f0e9ff;
+        color: #6f42c1;
+    }
+
     .admin-section-title {
         font-weight: 700;
-        margin: 30px 0 18px;
-    }
-
-    .admin-btn {
-        background: #ffc107;
-        color: #212529;
-        font-weight: 600;
-        border: none;
-    }
-
-    .admin-btn:hover {
-        background: #e0a800;
-        color: #212529;
-    }
+        margin-bottom: 20px;
+        }
 </style>
 
 <div class="admin-dashboard">
     <div class="container">
 
         <!-- HEADER -->
-        <div class="admin-header mb-4">
+        <div class="admin-header">
             <div class="d-flex flex-column flex-md-row
-                        justify-content-between align-items-md-center gap-3">
+                        justify-content-between align-items-md-center">
 
                 <div>
-                    <span class="text-warning fw-semibold">
-                        TECHMARKET ADMINISTRATION
-                    </span>
-
-                    <h2 class="mt-2">
-                        <i class="bi bi-speedometer2 me-2"></i>
-                        QUẢN TRỊ HỆ THỐNG
+                    <h2>
+                        <i class="bi bi-speedometer2 text-warning"></i>
+                        QUẢN TRỊ HỆ THỐNG TECHMARKET
                     </h2>
 
-                    <p class="text-white-50 mb-0">
-                        Chào mừng bạn đến với trung tâm quản lý TechMarket.
+                    <p class="mb-0 text-white-50">
+                        Chào mừng bạn đến với trung tâm quản trị TechMarket.
                     </p>
                 </div>
 
                 <a asp-area=""
                    asp-controller="Home"
                    asp-action="Index"
-                   class="btn btn-outline-light">
-                    <i class="bi bi-house-door me-1"></i>
+                   class="btn btn-outline-light mt-3 mt-md-0">
+                    <i class="bi bi-house-door"></i>
                     Về trang chủ
                 </a>
+
             </div>
         </div>
 
-        <!-- CHỨC NĂNG QUẢN LÝ -->
+        <!-- MANAGEMENT -->
         <h4 class="admin-section-title">
-            <i class="bi bi-grid-fill me-2"></i>
-            Chức năng quản lý
+            <i class="bi bi-grid-fill text-primary"></i>
+            Quản lý hệ thống
         </h4>
 
         <div class="row g-4">
 
-            <!-- Quản lý danh mục -->
-            <div class="col-md-6 col-lg-3">
+            <!-- USERS -->
+            <div class="col-md-6 col-lg-4">
                 <div class="admin-card">
-                    <div class="admin-icon icon-yellow">
-                        <i class="bi bi-tags-fill"></i>
-                    </div>
 
-                    <h5>Quản lý danh mục</h5>
-
-                    <p>
-                        Thêm, chỉnh sửa và quản lý các danh mục sản phẩm.
-                    </p>
-
-                    <a asp-area="Admin"
-                       asp-controller="Category"
-                       asp-action="Index"
-                       class="btn admin-btn w-100">
-                        <i class="bi bi-arrow-right-circle me-1"></i>
-                        Quản lý ngay
-                    </a>
-                </div>
-            </div>
-
-            <!-- Quản lý người dùng -->
-            <div class="col-md-6 col-lg-3">
-                <div class="admin-card">
                     <div class="admin-icon icon-blue">
                         <i class="bi bi-people-fill"></i>
                     </div>
@@ -169,18 +137,50 @@
                     <h5>Quản lý người dùng</h5>
 
                     <p>
-                        Theo dõi và quản lý tài khoản khách hàng trên hệ thống.
+                        Xem và quản lý tài khoản khách hàng trên hệ thống.
                     </p>
 
-                    <span class="badge bg-secondary">
-                        Chức năng tiếp theo
-                    </span>
+                    <a asp-area="Admin"
+                       asp-controller="User"
+                       asp-action="Index"
+                       class="btn btn-primary w-100">
+                        <i class="bi bi-arrow-right-circle"></i>
+                        Quản lý người dùng
+                    </a>
+
                 </div>
             </div>
 
-            <!-- Quản lý cửa hàng -->
-            <div class="col-md-6 col-lg-3">
+            <!-- STORE OWNER APPROVAL -->
+            <div class="col-md-6 col-lg-4">
                 <div class="admin-card">
+
+                    <div class="admin-icon icon-orange">
+                        <i class="bi bi-person-check-fill"></i>
+                    </div>
+
+                    <h5>Duyệt yêu cầu mở cửa hàng</h5>
+
+                    <p>
+                        Xem xét yêu cầu và xác nhận tài khoản được cấp quyền
+                        StoreOwner.
+                    </p>
+
+                    <a asp-area="Admin"
+                       asp-controller="StoreApproval"
+                       asp-action="Index"
+                       class="btn btn-warning w-100">
+                        <i class="bi bi-check-circle"></i>
+                        Xét duyệt yêu cầu
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- STORES -->
+            <div class="col-md-6 col-lg-4">
+                <div class="admin-card">
+
                     <div class="admin-icon icon-green">
                         <i class="bi bi-shop"></i>
                     </div>
@@ -188,49 +188,84 @@
                     <h5>Quản lý cửa hàng</h5>
 
                     <p>
-                        Theo dõi cửa hàng và xử lý yêu cầu đăng ký mở cửa hàng.
+                        Theo dõi danh sách cửa hàng đã đăng ký và được duyệt.
                     </p>
 
-                    <span class="badge bg-secondary">
-                        Chức năng tiếp theo
-                    </span>
+                    <a asp-area="Admin"
+                       asp-controller="Store"
+                       asp-action="Index"
+                       class="btn btn-success w-100">
+                        <i class="bi bi-arrow-right-circle"></i>
+                        Quản lý cửa hàng
+                    </a>
+
                 </div>
             </div>
 
-            <!-- Quản lý sản phẩm -->
-            <div class="col-md-6 col-lg-3">
+            <!-- PRODUCTS -->
+            <div class="col-md-6 col-lg-4">
                 <div class="admin-card">
+
                     <div class="admin-icon icon-purple">
-                        <i class="bi bi-box-seam-fill"></i>
+                        <i class="bi bi-box-seam"></i>
                     </div>
 
                     <h5>Quản lý sản phẩm</h5>
 
                     <p>
-                        Kiểm soát sản phẩm được đăng bán trên TechMarket.
+                        Kiểm soát các sản phẩm được đăng bán trên TechMarket.
                     </p>
 
-                    <span class="badge bg-secondary">
-                        Chức năng tiếp theo
-                    </span>
+                    <a asp-area="Admin"
+                       asp-controller="Product"
+                       asp-action="Index"
+                       class="btn btn-dark w-100">
+                        <i class="bi bi-arrow-right-circle"></i>
+                        Quản lý sản phẩm
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- CATEGORIES -->
+            <div class="col-md-6 col-lg-4">
+                <div class="admin-card">
+
+                    <div class="admin-icon icon-blue">
+                        <i class="bi bi-tags-fill"></i>
+                    </div>
+
+                    <h5>Quản lý danh mục</h5>
+
+                    <p>
+                        Thêm, sửa và quản lý danh mục sản phẩm.
+                    </p>
+
+                    <a asp-area="Admin"
+                       asp-controller="Category"
+                       asp-action="Index"
+                       class="btn btn-primary w-100">
+                        <i class="bi bi-arrow-right-circle"></i>
+                        Quản lý danh mục
+                    </a>
+
                 </div>
             </div>
 
         </div>
 
-        <!-- THÔNG TIN -->
-        <div class="mt-5 p-4 bg-white rounded-4 shadow-sm">
-            <h5 class="fw-bold">
-                <i class="bi bi-info-circle-fill text-warning me-2"></i>
-                Trung tâm quản trị TechMarket
-            </h5>
+        <!-- FOOTER NOTE -->
+        <div class="mt-4 p-3 bg-white rounded-3 shadow-sm">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-shield-lock-fill text-success fs-4 me-3"></i>
 
-            <p class="text-muted mb-0">
-                Sử dụng các chức năng quản lý để kiểm soát hoạt động
-                của hệ thống thương mại điện tử. Các chức năng quản lý
-                người dùng, cửa hàng và sản phẩm sẽ được kết nối với
-                trang quản trị tương ứng ở những bước tiếp theo.
-            </p>
+                <div>
+                    <strong>Khu vực quản trị viên</strong>
+                    <div class="text-muted small">
+                        Chỉ tài khoản có quyền Admin mới được phép truy cập.
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
