@@ -1,0 +1,237 @@
+﻿@{
+    ViewData["Title"] = "Quản trị hệ thống";
+}
+
+<style>
+    .admin-dashboard {
+        min-height: 75vh;
+        background: #f5f6fa;
+        padding: 35px 0 50px;
+    }
+
+    .admin-header {
+        background: linear-gradient(135deg, #171717, #343434);
+        color: white;
+        padding: 30px;
+        border-radius: 16px;
+        border-left: 5px solid #ffc107;
+    }
+
+    .admin-header h2 {
+        font-weight: 700;
+    }
+
+    .admin-card {
+        background: white;
+        border: none;
+        border-radius: 14px;
+        padding: 25px;
+        height: 100%;
+        box-shadow: 0 4px 15px rgba(0,0,0,.06);
+        transition: .25s;
+    }
+
+    .admin-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 22px rgba(0,0,0,.12);
+    }
+
+    .admin-icon {
+        width: 55px;
+        height: 55px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+        margin-bottom: 18px;
+    }
+
+    .icon-yellow {
+        background: #fff3cd;
+        color: #b88600;
+    }
+
+    .icon-blue {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+
+    .icon-green {
+        background: #d1fae5;
+        color: #059669;
+    }
+
+    .icon-purple {
+        background: #ede9fe;
+        color: #7c3aed;
+    }
+
+    .admin-card h5 {
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .admin-card p {
+        color: #6c757d;
+        min-height: 48px;
+    }
+
+    .admin-section-title {
+        font-weight: 700;
+        margin: 30px 0 18px;
+    }
+
+    .admin-btn {
+        background: #ffc107;
+        color: #212529;
+        font-weight: 600;
+        border: none;
+    }
+
+    .admin-btn:hover {
+        background: #e0a800;
+        color: #212529;
+    }
+</style>
+
+<div class="admin-dashboard">
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="admin-header mb-4">
+            <div class="d-flex flex-column flex-md-row
+                        justify-content-between align-items-md-center gap-3">
+
+                <div>
+                    <span class="text-warning fw-semibold">
+                        TECHMARKET ADMINISTRATION
+                    </span>
+
+                    <h2 class="mt-2">
+                        <i class="bi bi-speedometer2 me-2"></i>
+                        QUẢN TRỊ HỆ THỐNG
+                    </h2>
+
+                    <p class="text-white-50 mb-0">
+                        Chào mừng bạn đến với trung tâm quản lý TechMarket.
+                    </p>
+                </div>
+
+                <a asp-area=""
+                   asp-controller="Home"
+                   asp-action="Index"
+                   class="btn btn-outline-light">
+                    <i class="bi bi-house-door me-1"></i>
+                    Về trang chủ
+                </a>
+            </div>
+        </div>
+
+        <!-- CHỨC NĂNG QUẢN LÝ -->
+        <h4 class="admin-section-title">
+            <i class="bi bi-grid-fill me-2"></i>
+            Chức năng quản lý
+        </h4>
+
+        <div class="row g-4">
+
+            <!-- Quản lý danh mục -->
+            <div class="col-md-6 col-lg-3">
+                <div class="admin-card">
+                    <div class="admin-icon icon-yellow">
+                        <i class="bi bi-tags-fill"></i>
+                    </div>
+
+                    <h5>Quản lý danh mục</h5>
+
+                    <p>
+                        Thêm, chỉnh sửa và quản lý các danh mục sản phẩm.
+                    </p>
+
+                    <a asp-area="Admin"
+                       asp-controller="Category"
+                       asp-action="Index"
+                       class="btn admin-btn w-100">
+                        <i class="bi bi-arrow-right-circle me-1"></i>
+                        Quản lý ngay
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quản lý người dùng -->
+            <div class="col-md-6 col-lg-3">
+                <div class="admin-card">
+                    <div class="admin-icon icon-blue">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+
+                    <h5>Quản lý người dùng</h5>
+
+                    <p>
+                        Theo dõi và quản lý tài khoản khách hàng trên hệ thống.
+                    </p>
+
+                    <span class="badge bg-secondary">
+                        Chức năng tiếp theo
+                    </span>
+                </div>
+            </div>
+
+            <!-- Quản lý cửa hàng -->
+            <div class="col-md-6 col-lg-3">
+                <div class="admin-card">
+                    <div class="admin-icon icon-green">
+                        <i class="bi bi-shop"></i>
+                    </div>
+
+                    <h5>Quản lý cửa hàng</h5>
+
+                    <p>
+                        Theo dõi cửa hàng và xử lý yêu cầu đăng ký mở cửa hàng.
+                    </p>
+
+                    <span class="badge bg-secondary">
+                        Chức năng tiếp theo
+                    </span>
+                </div>
+            </div>
+
+            <!-- Quản lý sản phẩm -->
+            <div class="col-md-6 col-lg-3">
+                <div class="admin-card">
+                    <div class="admin-icon icon-purple">
+                        <i class="bi bi-box-seam-fill"></i>
+                    </div>
+
+                    <h5>Quản lý sản phẩm</h5>
+
+                    <p>
+                        Kiểm soát sản phẩm được đăng bán trên TechMarket.
+                    </p>
+
+                    <span class="badge bg-secondary">
+                        Chức năng tiếp theo
+                    </span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- THÔNG TIN -->
+        <div class="mt-5 p-4 bg-white rounded-4 shadow-sm">
+            <h5 class="fw-bold">
+                <i class="bi bi-info-circle-fill text-warning me-2"></i>
+                Trung tâm quản trị TechMarket
+            </h5>
+
+            <p class="text-muted mb-0">
+                Sử dụng các chức năng quản lý để kiểm soát hoạt động
+                của hệ thống thương mại điện tử. Các chức năng quản lý
+                người dùng, cửa hàng và sản phẩm sẽ được kết nối với
+                trang quản trị tương ứng ở những bước tiếp theo.
+            </p>
+        </div>
+
+    </div>
+</div>

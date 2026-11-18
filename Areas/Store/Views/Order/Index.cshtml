@@ -1,0 +1,653 @@
+﻿@model List<TechMarket.Models.Order>
+
+@{
+    ViewData["Title"] = "Quản lý đơn hàng";
+
+    var orders = Model ?? new List<TechMarket.Models.Order>();
+
+    var storeOrders = ViewBag.StoreOrders as Dictionary<int, TechMarket.Models.StoreOrder>
+        ?? new Dictionary<int, TechMarket.Models.StoreOrder>();
+
+    string GetStatus(int orderId)
+    {
+        return storeOrders.TryGetValue(orderId, out var storeOrder)
+            ? storeOrder.Status
+            : "Chưa xác định";
+    }
+
+    int totalOrders = orders.Count;
+    int pendingOrders = storeOrders.Values.Count(x => x.Status == "Chờ xác nhận");
+    int shippingOrders = storeOrders.Values.Count(x => x.Status == "Đang giao hàng");
+    int completedOrders = storeOrders.Values.Count(x => x.Status == "Đã giao hàng");
+    int cancelledOrders = storeOrders.Values.Count(x => x.Status == "Đã hủy");
+
+    decimal totalRevenue = orders.Sum(o =>
+        o.OrderDetails?.Sum(d => d.TotalPrice) ?? 0);
+}
+
+<style>
+    .order-page {
+        padding: 25px;
+        background: #f8fafc;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .page-title {
+        font-size: 27px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 5px;
+    }
+
+    .page-subtitle {
+        color: #64748b;
+        margin: 0;
+    }
+
+    .btn-dashboard {
+        background: #2563eb;
+        color: white;
+        padding: 10px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: .2s;
+    }
+
+        .btn-dashboard:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid #e2e8f0;
+        height: 100%;
+        transition: .2s;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,.06);
+        }
+
+    .stat-label {
+        color: #64748b;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .stat-number {
+        color: #1e293b;
+        font-size: 26px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .stat-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+    }
+
+    .icon-blue {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+
+    .icon-orange {
+        background: #ffedd5;
+        color: #ea580c;
+    }
+
+    .icon-purple {
+        background: #ede9fe;
+        color: #7c3aed;
+    }
+
+    .icon-green {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+    .icon-red {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .order-card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+        margin-top: 25px;
+    }
+
+    .order-card-header {
+        padding: 20px;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .order-card-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .filter-area {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .filter-input {
+        min-width: 220px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 9px 12px;
+        outline: none;
+    }
+
+    .filter-select {
+        min-width: 170px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 9px 12px;
+        outline: none;
+        background: white;
+    }
+
+    .table-responsive {
+        width: 100%;
+    }
+
+    .order-table {
+        width: 100%;
+        border-collapse: collapse;
+        white-space: nowrap;
+    }
+
+        .order-table thead {
+            background: #f8fafc;
+        }
+
+        .order-table th {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .order-table td {
+            padding: 16px 15px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        .order-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+    .order-code {
+        color: #2563eb;
+        font-weight: 700;
+    }
+
+    .customer-name {
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    .order-date {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .order-price {
+        color: #dc2626;
+        font-weight: 700;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 11px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-pending {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .status-confirmed {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .status-shipping {
+        background: #ede9fe;
+        color: #6d28d9;
+    }
+
+    .status-completed {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .status-cancelled {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .status-unknown {
+        background: #e2e8f0;
+        color: #475569;
+    }
+
+    .btn-detail {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 12px;
+        background: #eff6ff;
+        color: #2563eb;
+        border-radius: 7px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 13px;
+        transition: .2s;
+    }
+
+        .btn-detail:hover {
+            background: #2563eb;
+            color: white;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 55px 20px;
+        color: #64748b;
+    }
+
+        .empty-state i {
+            font-size: 45px;
+            color: #cbd5e1;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .empty-state h5 {
+            color: #334155;
+            font-weight: 700;
+        }
+
+    @@media (max-width: 768px) {
+        .order-page {
+            padding: 15px;
+        }
+
+        .page-title {
+            font-size: 22px;
+        }
+
+        .filter-input,
+        .filter-select {
+            width: 100%;
+        }
+
+        .filter-area {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="order-page">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <div>
+            <h2 class="page-title">
+                <i class="bi bi-receipt me-2"></i>
+                Quản lý đơn hàng
+            </h2>
+            <p class="page-subtitle">
+                Theo dõi và quản lý các đơn hàng thuộc cửa hàng của bạn.
+            </p>
+        </div>
+
+        <a asp-area="Store"
+           asp-controller="Dashboard"
+           asp-action="Index"
+           class="btn-dashboard">
+            <i class="bi bi-speedometer2 me-2"></i>
+            Về Dashboard
+        </a>
+    </div>
+
+    <!-- STATISTICS -->
+    <div class="row g-3">
+
+        <div class="col-xl col-md-4 col-6">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="stat-label">Tổng đơn hàng</p>
+                        <h3 class="stat-number">@totalOrders</h3>
+                    </div>
+                    <div class="stat-icon icon-blue">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl col-md-4 col-6">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="stat-label">Chờ xác nhận</p>
+                        <h3 class="stat-number">@pendingOrders</h3>
+                    </div>
+                    <div class="stat-icon icon-orange">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl col-md-4 col-6">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="stat-label">Đang giao hàng</p>
+                        <h3 class="stat-number">@shippingOrders</h3>
+                    </div>
+                    <div class="stat-icon icon-purple">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl col-md-4 col-6">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="stat-label">Đã giao hàng</p>
+                        <h3 class="stat-number">@completedOrders</h3>
+                    </div>
+                    <div class="stat-icon icon-green">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl col-md-4 col-6">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="stat-label">Đã hủy</p>
+                        <h3 class="stat-number">@cancelledOrders</h3>
+                    </div>
+                    <div class="stat-icon icon-red">
+                        <i class="bi bi-x-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ORDER TABLE -->
+    <div class="order-card">
+
+        <div class="order-card-header">
+            <h5 class="order-card-title">
+                <i class="bi bi-list-ul me-2"></i>
+                Danh sách đơn hàng
+            </h5>
+
+            <div class="filter-area">
+
+                <input type="text"
+                       id="searchOrder"
+                       class="filter-input"
+                       placeholder="Tìm mã đơn hoặc khách hàng..." />
+
+                <select id="filterStatus" class="filter-select">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="Chờ xác nhận">Chờ xác nhận</option>
+                    <option value="Đang giao hàng">Đang giao hàng</option>
+                    <option value="Đã giao hàng">Đã giao hàng</option>
+                    <option value="Đã hủy">Đã hủy</option>
+                </select>
+
+            </div>
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="order-table">
+
+                <thead>
+                    <tr>
+                        <th>Mã đơn hàng</th>
+                        <th>Khách hàng</th>
+                        <th>Ngày đặt</th>
+                        <th>Số sản phẩm</th>
+                        <th>Giá trị đơn hàng</th>
+                        <th>Thanh toán</th>
+                        <th>Trạng thái</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody id="orderTableBody">
+
+                    @if (orders.Any())
+                    {
+                        foreach (var order in orders.OrderByDescending(o => o.CreatedAt))
+                        {
+                            string currentStatus = GetStatus(order.Id);
+
+                            string statusClass = currentStatus switch
+                            {
+                                "Chờ xác nhận" => "status-pending",
+                                "Đang giao hàng" => "status-shipping",
+                                "Đã giao hàng" => "status-completed",
+                                "Đã hủy" => "status-cancelled",
+                                _ => "status-unknown"
+                            };
+
+                            string statusIcon = currentStatus switch
+                            {
+                                "Chờ xác nhận" => "bi-clock-history",
+                                "Đang giao hàng" => "bi-truck",
+                                "Đã giao hàng" => "bi-check-circle",
+                                "Đã hủy" => "bi-x-circle",
+                                _ => "bi-question-circle"
+                            };
+
+                            int productCount = order.OrderDetails?.Sum(d => d.Quantity) ?? 0;
+
+                            decimal orderTotal = order.OrderDetails?.Sum(d => d.TotalPrice) ?? 0;
+
+                            <tr class="order-row"
+                                data-status="@currentStatus">
+
+                                <td>
+                                    <span class="order-code">
+                                        #TM-@order.Id.ToString("D5")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="customer-name">
+                                        @(string.IsNullOrWhiteSpace(order.ReceiverName)
+                                            ? "Chưa có thông tin"
+                                            : order.ReceiverName)
+                                    </div>
+                                    <small class="text-muted">
+                                        @order.Phone
+                                    </small>
+                                </td>
+
+                                <td>
+                                    <span class="order-date">
+                                        @order.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="fw-semibold">
+                                        @productCount
+                                    </span>
+                                    <small class="text-muted"> sản phẩm</small>
+                                </td>
+
+                                <td>
+                                    <span class="order-price">
+                                        @orderTotal.ToString("N0") đ
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @if (order.PaymentMethod == "COD")
+                                    {
+                                        <span class="badge bg-light text-dark border">
+                                            COD
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-primary">
+                                            @order.PaymentMethod
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <span class="status-badge @statusClass">
+                                        <i class="bi @statusIcon"></i>
+                                        @currentStatus
+                                    </span>
+                                </td>
+
+                                <td class="text-center">
+                                    <a asp-area="Store"
+                                       asp-controller="Order"
+                                       asp-action="Details"
+                                       asp-route-id="@order.Id"
+                                       class="btn-detail">
+                                        <i class="bi bi-eye"></i>
+                                        Chi tiết
+                                    </a>
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                <div class="empty-state">
+                                    <i class="bi bi-inbox"></i>
+                                    <h5>Chưa có đơn hàng</h5>
+                                    <p class="mb-0">
+                                        Các đơn hàng của cửa hàng sẽ hiển thị tại đây.
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+            <div id="noSearchResult" class="empty-state" style="display:none;">
+                <i class="bi bi-search"></i>
+                <h5>Không tìm thấy đơn hàng</h5>
+                <p class="mb-0">
+                    Vui lòng thử từ khóa hoặc trạng thái khác.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const searchInput = document.getElementById("searchOrder");
+        const statusFilter = document.getElementById("filterStatus");
+        const rows = document.querySelectorAll(".order-row");
+        const noResult = document.getElementById("noSearchResult");
+
+        function filterOrders() {
+
+            const keyword = searchInput.value.trim().toLowerCase();
+            const selectedStatus = statusFilter.value;
+
+            let visibleCount = 0;
+
+            rows.forEach(function (row) {
+
+                const rowText = row.innerText.toLowerCase();
+                const rowStatus = row.getAttribute("data-status");
+
+                const matchesKeyword = rowText.includes(keyword);
+                const matchesStatus = selectedStatus === ""
+                    || rowStatus === selectedStatus;
+
+                if (matchesKeyword && matchesStatus) {
+                    row.style.display = "";
+                    visibleCount++;
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            noResult.style.display =
+                rows.length > 0 && visibleCount === 0 ? "block" : "none";
+        }
+
+        searchInput.addEventListener("input", filterOrders);
+        statusFilter.addEventListener("change", filterOrders);
+
+    });
+</script>

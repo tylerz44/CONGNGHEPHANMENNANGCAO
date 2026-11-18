@@ -1,0 +1,101 @@
+﻿@model IEnumerable<TechMarket.Models.StoreRegistrationRequest>
+
+@{
+    ViewData["Title"] = "Duyệt cửa hàng";
+}
+
+<h2>Quản lý yêu cầu mở cửa hàng</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Mã</th>
+            <th>Tên cửa hàng</th>
+            <th>Địa chỉ</th>
+            <th>Số điện thoại</th>
+            <th>Ngày gửi</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.StoreName</td>
+                <td>@item.Address</td>
+                <td>@item.Phone</td>
+                <td>@item.CreatedAt.ToString("dd/MM/yyyy")</td>
+                <td>
+                    @if (item.Status == "Pending")
+                    {
+                        <span class="badge bg-warning text-dark">Chờ duyệt</span>
+                    }
+                    else if (item.Status == "Approved")
+                    {
+                        <span class="badge bg-success">Đã duyệt</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Đã từ chối</span>
+                    }
+                </td>
+
+                <td>
+                    @if (item.Status == "Pending")
+                    {
+                        <form action="/Admin/StoreApproval/Approve"
+                              method="post"
+                              class="d-inline">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="id"
+                                   value="@item.Id" />
+
+                            <button type="submit"
+                                    class="btn btn-success btn-sm"
+                                    onclick="return confirm('Bạn chắc chắn muốn duyệt cửa hàng này?')">
+                                Duyệt
+                            </button>
+                        </form>
+
+                        <form action="/Admin/StoreApproval/Reject"
+                              method="post"
+                              class="d-inline">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="id"
+                                   value="@item.Id" />
+
+                            <button type="submit"
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Bạn chắc chắn muốn từ chối?')">
+                                Từ chối
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>    

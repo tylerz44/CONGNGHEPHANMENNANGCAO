@@ -1,0 +1,932 @@
+﻿@model IEnumerable<TechMarket.Models.Product>
+
+@{
+    ViewData["Title"] = "Quản lý sản phẩm";
+
+    var products = Model?.ToList() ?? new List<TechMarket.Models.Product>();
+
+    int totalProducts = products.Count;
+    int activeProducts = products.Count(p => p.IsActive);
+    int hiddenProducts = products.Count(p => !p.IsActive);
+    int totalStock = products.Sum(p => p.Quantity);
+}
+
+<style>
+    .product-page {
+        min-height: 90vh;
+        padding: 30px 0 50px;
+        background: #f4f6fb;
+    }
+
+    .product-container {
+        max-width: 1550px;
+        margin: auto;
+        padding: 0 25px;
+    }
+
+    /* HEADER */
+    .product-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 32px 35px;
+        border-radius: 20px;
+        color: white;
+        background: linear-gradient(115deg, #172554, #1d4ed8, #6366f1);
+        box-shadow: 0 10px 25px rgba(37,99,235,.16);
+        margin-bottom: 25px;
+    }
+
+        .product-hero::after {
+            content: "";
+            position: absolute;
+            width: 230px;
+            height: 230px;
+            right: 10%;
+            top: -130px;
+            border: 1px solid rgba(255,255,255,.15);
+            border-radius: 50%;
+            box-shadow: 0 0 0 35px rgba(255,255,255,.04), 0 0 0 70px rgba(255,255,255,.025);
+        }
+
+    .product-hero-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .product-hero h2 {
+        font-size: 27px;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .product-hero p {
+        color: #dbeafe;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .product-store-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 8px;
+        padding: 8px 13px;
+        border-radius: 30px;
+        background: rgba(255,255,255,.15);
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .product-hero-icon {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        font-size: 75px;
+        color: rgba(255,255,255,.85);
+    }
+
+    .btn-add-product {
+        position: relative;
+        z-index: 2;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 18px;
+        border: none;
+        border-radius: 11px;
+        background: white;
+        color: #1d4ed8;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 800;
+        transition: all .2s ease;
+    }
+
+        .btn-add-product:hover {
+            background: #dbeafe;
+            color: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+    /* STATISTICS */
+    .product-stat {
+        height: 100%;
+        padding: 20px;
+        background: white;
+        border: 1px solid #edf0f5;
+        border-radius: 16px;
+        box-shadow: 0 4px 14px rgba(15,23,42,.035);
+        transition: all .25s ease;
+    }
+
+        .product-stat:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(15,23,42,.08);
+        }
+
+    .stat-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .stat-label {
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .stat-icon {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 13px;
+        font-size: 21px;
+    }
+
+    .stat-blue {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+
+    .stat-green {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+    .stat-gray {
+        background: #f1f5f9;
+        color: #64748b;
+    }
+
+    .stat-purple {
+        background: #ede9fe;
+        color: #7c3aed;
+    }
+
+    .stat-number {
+        color: #172554;
+        font-size: 27px;
+        font-weight: 800;
+    }
+
+    .stat-note {
+        color: #94a3b8;
+        font-size: 12px;
+        margin-top: 3px;
+    }
+
+    /* ALERT */
+    .product-alert {
+        border: none;
+        border-radius: 12px;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+    }
+
+    /* PRODUCT TABLE CARD */
+    .product-content {
+        margin-top: 25px;
+        overflow: hidden;
+        background: white;
+        border: 1px solid #edf0f5;
+        border-radius: 18px;
+        box-shadow: 0 5px 18px rgba(15,23,42,.04);
+    }
+
+    .product-content-header {
+        padding: 22px 25px;
+        border-bottom: 1px solid #edf0f5;
+    }
+
+        .product-content-header h5 {
+            color: #172554;
+            font-size: 17px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .product-content-header p {
+            color: #94a3b8;
+            font-size: 13px;
+            margin: 5px 0 0;
+        }
+
+    /* SEARCH AND FILTER */
+    .product-search {
+        position: relative;
+        min-width: 230px;
+    }
+
+        .product-search i {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .product-search input {
+            width: 100%;
+            padding: 10px 12px 10px 38px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 13px;
+            outline: none;
+        }
+
+            .product-search input:focus {
+                border-color: #60a5fa;
+                box-shadow: 0 0 0 3px rgba(59,130,246,.1);
+            }
+
+    .product-filter {
+        min-width: 150px;
+        padding: 10px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 13px;
+        color: #475569;
+        background: white;
+    }
+
+    /* TABLE */
+    .product-table {
+        margin: 0;
+        white-space: nowrap;
+    }
+
+        .product-table thead th {
+            padding: 16px 15px;
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .35px;
+            border-bottom: 1px solid #edf0f5;
+        }
+
+        .product-table tbody td {
+            padding: 15px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+            font-size: 13px;
+        }
+
+        .product-table tbody tr {
+            transition: background .2s ease;
+        }
+
+            .product-table tbody tr:hover {
+                background: #f8faff;
+            }
+
+            .product-table tbody tr:last-child td {
+                border-bottom: none;
+            }
+
+    .product-image {
+        width: 65px;
+        height: 65px;
+        object-fit: cover;
+        border-radius: 12px;
+        border: 1px solid #edf0f5;
+        background: #f8fafc;
+    }
+
+    .product-image-placeholder {
+        width: 65px;
+        height: 65px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: #f1f5f9;
+        color: #94a3b8;
+        font-size: 24px;
+    }
+
+    .product-name {
+        color: #172554;
+        font-weight: 800;
+        white-space: normal;
+        min-width: 150px;
+        max-width: 220px;
+    }
+
+    .product-id {
+        color: #94a3b8;
+        font-size: 11px;
+        margin-top: 5px;
+    }
+
+    .product-price {
+        color: #dc2626;
+        font-weight: 800;
+        font-size: 14px;
+    }
+
+    .product-stock {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        background: #eff6ff;
+        color: #2563eb;
+        font-weight: 700;
+    }
+
+        .product-stock.low {
+            background: #fff7ed;
+            color: #ea580c;
+        }
+
+    .product-category {
+        display: inline-block;
+        padding: 6px 9px;
+        background: #f1f5f9;
+        color: #475569;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .product-attribute {
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .product-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 10px;
+        border-radius: 30px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+        .product-status.active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .product-status.hidden {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+    /* ACTION BUTTONS */
+    .product-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        min-width: 190px;
+    }
+
+    .btn-product-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        padding: 8px 10px;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 11px;
+        font-weight: 700;
+        transition: all .2s ease;
+    }
+
+    .btn-variant {
+        background: #ede9fe;
+        color: #7c3aed;
+    }
+
+        .btn-variant:hover {
+            background: #7c3aed;
+            color: white;
+        }
+
+    .btn-edit {
+        background: #fef3c7;
+        color: #b45309;
+    }
+
+        .btn-edit:hover {
+            background: #f59e0b;
+            color: white;
+        }
+
+    .btn-hide {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+        .btn-hide:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+    .btn-show {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+        .btn-show:hover {
+            background: #16a34a;
+            color: white;
+        }
+
+    .product-empty {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .product-empty-icon {
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px;
+        border-radius: 24px;
+        background: #eff6ff;
+        color: #3b82f6;
+        font-size: 36px;
+    }
+
+    .product-empty h5 {
+        color: #172554;
+        font-weight: 800;
+    }
+
+    .product-empty p {
+        color: #94a3b8;
+        font-size: 13px;
+    }
+
+    .product-empty-row {
+        display: none;
+    }
+
+    .product-footer {
+        padding: 15px 22px;
+        border-top: 1px solid #edf0f5;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    @@media (max-width: 768px) {
+        .product-container {
+            padding: 0 15px;
+        }
+
+        .product-hero {
+            padding: 25px 20px;
+        }
+
+            .product-hero h2 {
+                font-size: 23px;
+            }
+
+        .product-hero-icon {
+            display: none;
+        }
+
+        .product-content-header {
+            padding: 18px;
+        }
+
+        .product-search,
+        .product-filter {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="product-page">
+    <div class="product-container">
+
+        <!-- HEADER -->
+        <div class="product-hero">
+            <div class="row align-items-center">
+                <div class="col-lg-8 product-hero-content">
+                    <h2>
+                        <i class="bi bi-box-seam me-2"></i>
+                        Quản lý sản phẩm
+                    </h2>
+
+                    <p>
+                        Quản lý danh sách sản phẩm, cập nhật thông tin,
+                        giá bán và tình trạng kinh doanh của cửa hàng.
+                    </p>
+
+                    <div class="product-store-label">
+                        <i class="bi bi-shop"></i>
+                        Cửa hàng: @(ViewBag.StoreName ?? "Cửa hàng của bạn")
+                    </div>
+                </div>
+
+
+                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+
+                    <div class="d-flex justify-content-lg-end justify-content-start flex-wrap gap-2">
+
+                        <a asp-area="Store"
+                           asp-controller="Dashboard"
+                           asp-action="Index"
+                           class="btn-add-product">
+                            <i class="bi bi-house-door-fill"></i>
+                            Quay Lại Dashboard
+                        </a>
+
+                        <a asp-area="Store"
+                           asp-controller="Product"
+                           asp-action="Create"
+                           class="btn-add-product">
+                            <i class="bi bi-plus-circle-fill"></i>
+                            Thêm sản phẩm mới
+                        </a>
+
+                    </div>
+
+                    <div class="product-hero-icon mt-2">
+                        <i class="bi bi-bag-check"></i>
+                    </div>
+
+                </div>
+
+                    <div class="product-hero-icon mt-2">
+                        <i class="bi bi-bag-check"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SUCCESS MESSAGE -->
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show product-alert"
+                 role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                @TempData["Success"]
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+            </div>
+        }
+
+        <!-- STATISTICS -->
+        <div class="row g-3">
+
+            <div class="col-6 col-xl-3">
+                <div class="product-stat">
+                    <div class="stat-top">
+                        <span class="stat-label">Tổng sản phẩm</span>
+                        <div class="stat-icon stat-blue">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number">@totalProducts</div>
+                    <div class="stat-note">Sản phẩm trong cửa hàng</div>
+                </div>
+            </div>
+
+            <div class="col-6 col-xl-3">
+                <div class="product-stat">
+                    <div class="stat-top">
+                        <span class="stat-label">Đang bán</span>
+                        <div class="stat-icon stat-green">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number">@activeProducts</div>
+                    <div class="stat-note">Sản phẩm đang hiển thị</div>
+                </div>
+            </div>
+
+            <div class="col-6 col-xl-3">
+                <div class="product-stat">
+                    <div class="stat-top">
+                        <span class="stat-label">Đã ẩn</span>
+                        <div class="stat-icon stat-gray">
+                            <i class="bi bi-eye-slash"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number">@hiddenProducts</div>
+                    <div class="stat-note">Sản phẩm chưa hiển thị</div>
+                </div>
+            </div>
+
+            <div class="col-6 col-xl-3">
+                <div class="product-stat">
+                    <div class="stat-top">
+                        <span class="stat-label">Tổng tồn kho</span>
+                        <div class="stat-icon stat-purple">
+                            <i class="bi bi-boxes"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number">@totalStock</div>
+                    <div class="stat-note">Tổng số lượng sản phẩm</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- PRODUCT LIST -->
+        <div class="product-content">
+
+            <div class="product-content-header">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+                    <div>
+                        <h5>
+                            <i class="bi bi-list-ul text-primary me-2"></i>
+                            Danh sách sản phẩm
+                        </h5>
+                        <p>Quản lý và cập nhật các sản phẩm của cửa hàng</p>
+                    </div>
+
+                    @if (products.Any())
+                    {
+                        <div class="d-flex flex-wrap gap-2">
+                            <div class="product-search">
+                                <i class="bi bi-search"></i>
+                                <input type="text"
+                                       id="productSearch"
+                                       placeholder="Tìm tên sản phẩm..." />
+                            </div>
+
+                            <select id="productStatusFilter" class="product-filter">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="active">Đang bán</option>
+                                <option value="hidden">Đã ẩn</option>
+                            </select>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+            @if (products.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table product-table align-middle">
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>HÌNH ẢNH</th>
+                                <th>SẢN PHẨM</th>
+                                <th>DANH MỤC</th>
+                                <th>GIÁ BÁN</th>
+                                <th>TỒN KHO</th>
+                                <th>SIZE</th>
+                                <th>MÀU SẮC</th>
+                                <th>TRẠNG THÁI</th>
+                                <th>THAO TÁC</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="productTableBody">
+
+                            @foreach (var item in products)
+                            {
+                                <tr class="product-row"
+                                    data-name="@item.Name"
+                                    data-status="@(item.IsActive ? "active" : "hidden")">
+
+                                    <td>
+                                        <span class="text-muted fw-bold">
+                                            #@item.Id
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                        {
+                                            <img src="@item.ImageUrl"
+                                                 alt="@item.Name"
+                                                 class="product-image" />
+                                        }
+                                        else
+                                        {
+                                            <div class="product-image-placeholder">
+                                                <i class="bi bi-image"></i>
+                                            </div>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <div class="product-name">
+                                            @item.Name
+                                        </div>
+                                        <div class="product-id">
+                                            Mã sản phẩm: #@item.Id
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <span class="product-category">
+                                            #@item.CategoryId
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="product-price">
+                                            @item.Price.ToString("N0") đ
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="product-stock @(item.Quantity <= 5 ? "low" : "")">
+                                            <i class="bi bi-box"></i>
+                                            @item.Quantity
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="product-attribute">
+                                            @(string.IsNullOrWhiteSpace(item.Size) ? "Theo biến thể" : item.Size)
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="product-attribute">
+                                            @(string.IsNullOrWhiteSpace(item.Color) ? "Theo biến thể" : item.Color)
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @if (item.IsActive)
+                                        {
+                                            <span class="product-status active">
+                                                <i class="bi bi-check-circle-fill"></i>
+                                                Đang bán
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="product-status hidden">
+                                                <i class="bi bi-eye-slash-fill"></i>
+                                                Đã ẩn
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <div class="product-actions">
+
+                                            <a asp-area="Store"
+                                               asp-controller="Product"
+                                               asp-action="Variants"
+                                               asp-route-productId="@item.Id"
+                                               class="btn-product-action btn-variant">
+                                                <i class="bi bi-palette"></i>
+                                                Biến thể
+                                            </a>
+
+                                            <a asp-area="Store"
+                                               asp-controller="Product"
+                                               asp-action="Edit"
+                                               asp-route-id="@item.Id"
+                                               class="btn-product-action btn-edit">
+                                                <i class="bi bi-pencil-square"></i>
+                                                Sửa
+                                            </a>
+
+                                            <form asp-area="Store"
+                                                  asp-controller="Product"
+                                                  asp-action="ToggleStatus"
+                                                  method="post">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@item.Id" />
+
+                                                @if (item.IsActive)
+                                                {
+                                                    <button type="submit"
+                                                            class="btn-product-action btn-hide"
+                                                            onclick="return confirm('Bạn có chắc muốn ẩn sản phẩm này?');">
+                                                        <i class="bi bi-eye-slash"></i>
+                                                        Ẩn
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <button type="submit"
+                                                            class="btn-product-action btn-show"
+                                                            onclick="return confirm('Bạn có chắc muốn hiển thị sản phẩm này?');">
+                                                        <i class="bi bi-eye"></i>
+                                                        Hiện
+                                                    </button>
+                                                }
+
+                                            </form>
+
+                                        </div>
+                                    </td>
+
+                                </tr>
+                            }
+
+                            <tr id="noProductResult" class="product-empty-row">
+                                <td colspan="10" class="text-center py-5 text-muted">
+                                    <i class="bi bi-search fs-3 d-block mb-2"></i>
+                                    Không tìm thấy sản phẩm phù hợp.
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="product-footer">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Tổng cộng @totalProducts sản phẩm trong cửa hàng.
+                    Số lượng tồn kho được hiển thị theo dữ liệu sản phẩm hiện tại.
+                </div>
+            }
+            else
+            {
+                <div class="product-empty">
+                    <div class="product-empty-icon">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+
+                    <h5>Chưa có sản phẩm nào</h5>
+
+                    <p>
+                        Hãy thêm sản phẩm đầu tiên để bắt đầu kinh doanh trên TechMarket.
+                    </p>
+
+                    <a asp-area="Store"
+                       asp-controller="Product"
+                       asp-action="Create"
+                       class="btn btn-primary rounded-3 px-4">
+                        <i class="bi bi-plus-circle me-1"></i>
+                        Thêm sản phẩm
+                    </a>
+                </div>
+            }
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("productSearch");
+        const statusFilter = document.getElementById("productStatusFilter");
+        const rows = document.querySelectorAll(".product-row");
+        const noResult = document.getElementById("noProductResult");
+
+        function filterProducts() {
+            if (!searchInput || !statusFilter) return;
+
+            const keyword = searchInput.value.trim().toLowerCase();
+            const selectedStatus = statusFilter.value;
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const name = (row.dataset.name || "").toLowerCase();
+                const status = row.dataset.status || "";
+
+                const matchesName = name.includes(keyword);
+                const matchesStatus =
+                    selectedStatus === "" || status === selectedStatus;
+
+                const visible = matchesName && matchesStatus;
+
+                row.style.display = visible ? "" : "none";
+
+                if (visible) visibleCount++;
+            });
+
+            if (noResult) {
+                noResult.style.display =
+                    visibleCount === 0 ? "table-row" : "none";
+            }
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener("input", filterProducts);
+        }
+
+        if (statusFilter) {
+            statusFilter.addEventListener("change", filterProducts);
+        }
+    });
+</script>

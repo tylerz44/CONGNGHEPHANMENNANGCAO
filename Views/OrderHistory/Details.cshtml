@@ -1,0 +1,229 @@
+﻿@model TechMarket.Models.Order
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+
+    bool canCancel = Model.Status == "Chờ xác nhận"
+                  || Model.Status == "Đang giao hàng";
+}
+
+<div class="container mt-4 mb-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Chi tiết đơn hàng #@Model.Id</h2>
+
+        <a asp-controller="OrderHistory"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Quay lại
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            @TempData["Success"]
+            <button type="button" class="btn-close"
+                    data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="bi bi-exclamation-circle-fill me-2"></i>
+            @TempData["Error"]
+            <button type="button" class="btn-close"
+                    data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header fw-bold">
+            <i class="bi bi-receipt me-2"></i>
+            Thông tin đơn hàng
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <strong>Mã đơn hàng:</strong>
+                    #@Model.Id
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <strong>Ngày đặt:</strong>
+                    @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <strong>Người nhận:</strong>
+                    @Model.ReceiverName
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <strong>Số điện thoại:</strong>
+                    @Model.Phone
+                </div>
+
+                <div class="col-12 mb-3">
+                    <strong>Địa chỉ giao hàng:</strong>
+                    @Model.ShippingAddress
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <strong>Phương thức thanh toán:</strong>
+
+                    @if (Model.PaymentMethod == "COD")
+                    {
+                        <span>Thanh toán khi nhận hàng</span>
+                    }
+                    else
+                    {
+                        @Model.PaymentMethod
+                    }
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <strong>Trạng thái:</strong>
+
+                    @if (Model.Status == "Chờ xác nhận")
+                    {
+                        <span class="badge bg-warning text-dark">
+                            @Model.Status
+                        </span>
+                    }
+                    else if (Model.Status == "Đã xác nhận")
+                    {
+                        <span class="badge bg-info text-dark">
+                            @Model.Status
+                        </span>
+                    }
+                    else if (Model.Status == "Đang giao hàng")
+                    {
+                        <span class="badge bg-primary">
+                            @Model.Status
+                        </span>
+                    }
+                    else if (Model.Status == "Đã giao hàng")
+                    {
+                        <span class="badge bg-success">
+                            @Model.Status
+                        </span>
+                    }
+                    else if (Model.Status == "Đã hủy")
+                    {
+                        <span class="badge bg-danger">
+                            @Model.Status
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">
+                            @Model.Status
+                        </span>
+                    }
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Note))
+                {
+                    <div class="col-12">
+                        <strong>Ghi chú:</strong>
+                        @Model.Note
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header fw-bold">
+            <i class="bi bi-bag me-2"></i>
+            Danh sách sản phẩm
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>SKU</th>
+                            <th>Size</th>
+                            <th>Màu sắc</th>
+                            <th>Đơn giá</th>
+                            <th>Số lượng</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model.OrderDetails)
+                        {
+                            <tr>
+                                <td>@item.ProductName</td>
+                                <td>@item.SKU</td>
+                                <td>@item.Size</td>
+                                <td>@item.Color</td>
+
+                                <td>
+                                    @item.UnitPrice.ToString("N0") đ
+                                </td>
+
+                                <td>@item.Quantity</td>
+
+                                <td class="text-danger fw-bold">
+                                    @item.TotalPrice.ToString("N0") đ
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                    <tfoot>
+                        <tr>
+                            <td colspan="6" class="text-end fw-bold">
+                                Tổng tiền:
+                            </td>
+
+                            <td class="text-danger fw-bold">
+                                @Model.TotalAmount.ToString("N0") đ
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    @if (canCancel)
+    {
+        <div class="d-flex justify-content-end mt-4">
+            <form asp-controller="OrderHistory"
+                  asp-action="Cancel"
+                  asp-route-id="@Model.Id"
+                  method="post"
+                  onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?');">
+
+                @Html.AntiForgeryToken()
+
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Hủy đơn hàng
+                </button>
+            </form>
+        </div>
+    }
+    else if (Model.Status == "Đã giao hàng" ||
+    Model.Status == "Đã hủy")
+    {
+        <div class="alert alert-secondary mt-4 mb-0">
+            <i class="bi bi-info-circle me-2"></i>
+            Đơn hàng này không thể hủy.
+        </div>
+    }
+
+</div>

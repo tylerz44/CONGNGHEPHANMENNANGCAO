@@ -1,0 +1,457 @@
+﻿@model TechMarket.ViewModels.CreateProductViewModel
+
+@{
+    ViewData["Title"] = "Thêm sản phẩm";
+}
+
+<style>
+    .product-form-page {
+        padding: 25px 0 45px;
+    }
+
+    .product-form-hero {
+        background: linear-gradient(120deg, #172554, #2563eb);
+        color: white;
+        padding: 28px;
+        border-radius: 16px;
+        margin-bottom: 25px;
+    }
+
+    .product-form-hero h2 {
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .product-form-hero p {
+        color: rgba(255,255,255,.8);
+        margin-bottom: 0;
+    }
+
+    .product-form-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,.04);
+        margin-bottom: 22px;
+    }
+
+    .product-form-card-header {
+        padding: 18px 22px;
+        border-bottom: 1px solid #e5e7eb;
+        background: #f8fafc;
+    }
+
+    .product-form-card-header h5 {
+        margin: 0;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .product-form-card-body {
+        padding: 24px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 8px;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 9px;
+        padding: 11px 13px;
+        border-color: #dbe2ea;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+    }
+
+    .form-hint {
+        font-size: 12px;
+        color: #64748b;
+        margin-top: 6px;
+    }
+
+    .product-form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .product-form-actions .btn {
+        border-radius: 9px;
+        padding: 10px 18px;
+        font-weight: 600;
+    }
+
+    .image-preview {
+        display: none;
+        margin-top: 15px;
+        max-width: 180px;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        padding: 5px;
+    }
+
+    .image-preview img {
+        width: 100%;
+        border-radius: 7px;
+        object-fit: cover;
+    }
+
+    @@media (max-width: 768px) {
+        .product-form-hero {
+            padding: 22px;
+        }
+
+        .product-form-card-body {
+            padding: 18px;
+        }
+
+        .product-form-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .product-form-actions .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="container-fluid product-form-page">
+
+    <!-- HEADER -->
+    <div class="product-form-hero">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+            <div>
+                <span class="badge bg-light text-primary mb-2">
+                    <i class="bi bi-shop"></i>
+                    QUẢN LÝ CỬA HÀNG
+                </span>
+
+                <h2>
+                    <i class="bi bi-plus-circle"></i>
+                    Thêm sản phẩm mới
+                </h2>
+
+                <p>
+                    Điền thông tin để đăng sản phẩm lên cửa hàng của bạn.
+                </p>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap">
+                <a asp-area="Store"
+                   asp-controller="Dashboard"
+                   asp-action="Index"
+                   class="btn btn-outline-light">
+                    <i class="bi bi-house-door"></i>
+                    Dashboard
+                </a>
+
+                <a asp-area="Store"
+                   asp-controller="Product"
+                   asp-action="Index"
+                   class="btn btn-warning">
+                    <i class="bi bi-arrow-left"></i>
+                    Danh sách sản phẩm
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <form asp-area="Store"
+          asp-controller="Product"
+          asp-action="Create"
+          method="post"
+          enctype="multipart/form-data">
+
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="All"
+             class="alert alert-danger"
+             role="alert"></div>
+
+        <!-- THÔNG TIN CƠ BẢN -->
+        <div class="product-form-card">
+
+            <div class="product-form-card-header">
+                <h5>
+                    <i class="bi bi-info-circle text-primary me-2"></i>
+                    Thông tin cơ bản
+                </h5>
+            </div>
+
+            <div class="product-form-card-body">
+
+                <div class="mb-4">
+                    <label asp-for="Name" class="form-label">
+                        Tên sản phẩm
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <input asp-for="Name"
+                           class="form-control"
+                           placeholder="Ví dụ: Áo thun nam Basic..." />
+
+                    <span asp-validation-for="Name"
+                          class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Description" class="form-label">
+                        Mô tả sản phẩm
+                    </label>
+
+                    <textarea asp-for="Description"
+                              class="form-control"
+                              rows="5"
+                              placeholder="Nhập mô tả chi tiết về chất liệu, kiểu dáng, đặc điểm sản phẩm..."></textarea>
+
+                    <span asp-validation-for="Description"
+                          class="text-danger small"></span>
+                </div>
+
+                <div class="mb-2">
+                    <label asp-for="CategoryId" class="form-label">
+                        Danh mục
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <select asp-for="CategoryId"
+                            asp-items="Model.Categories"
+                            class="form-select">
+                        <option value="">-- Chọn danh mục sản phẩm --</option>
+                    </select>
+
+                    <span asp-validation-for="CategoryId"
+                          class="text-danger small"></span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- GIÁ VÀ SỐ LƯỢNG -->
+        <div class="product-form-card">
+
+            <div class="product-form-card-header">
+                <h5>
+                    <i class="bi bi-currency-dollar text-primary me-2"></i>
+                    Giá và số lượng
+                </h5>
+            </div>
+
+            <div class="product-form-card-body">
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Price" class="form-label">
+                            Giá bán (VNĐ)
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <div class="input-group">
+                            <input asp-for="Price"
+                                   type="number"
+                                   step="0.01"
+                                   min="0.01"
+                                   class="form-control"
+                                   placeholder="150000" />
+
+                            <span class="input-group-text">VNĐ</span>
+                        </div>
+
+                        <span asp-validation-for="Price"
+                              class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Quantity" class="form-label">
+                            Số lượng tồn kho
+                        </label>
+
+                        <div class="input-group">
+                            <input asp-for="Quantity"
+                                   type="number"
+                                   min="0"
+                                   class="form-control"
+                                   placeholder="0" />
+
+                            <span class="input-group-text">Sản phẩm</span>
+                        </div>
+
+                        <span asp-validation-for="Quantity"
+                              class="text-danger small"></span>
+
+                        <div class="form-hint">
+                            Số lượng ban đầu của sản phẩm.
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- THUỘC TÍNH SẢN PHẨM -->
+        <div class="product-form-card">
+
+            <div class="product-form-card-header">
+                <h5>
+                    <i class="bi bi-tags text-primary me-2"></i>
+                    Thuộc tính sản phẩm
+                </h5>
+            </div>
+
+            <div class="product-form-card-body">
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Size" class="form-label">
+                            Kích cỡ
+                        </label>
+
+                        <input asp-for="Size"
+                               class="form-control"
+                               placeholder="S, M, L, XL" />
+
+                        <div class="form-hint">
+                            Ví dụ: S, M, L, XL hoặc để trống nếu quản lý bằng biến thể.
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Color" class="form-label">
+                            Màu sắc
+                        </label>
+
+                        <input asp-for="Color"
+                               class="form-control"
+                               placeholder="Đen, Trắng, Xanh..." />
+
+                        <div class="form-hint">
+                            Ví dụ: Đen, Trắng, Xanh hoặc để trống nếu quản lý bằng biến thể.
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- HÌNH ẢNH -->
+        <div class="product-form-card">
+
+            <div class="product-form-card-header">
+                <h5>
+                    <i class="bi bi-image text-primary me-2"></i>
+                    Hình ảnh sản phẩm
+                </h5>
+            </div>
+
+            <div class="product-form-card-body">
+
+                <label asp-for="ImageFile" class="form-label">
+                    Chọn hình ảnh
+                </label>
+
+                <input asp-for="ImageFile"
+                       type="file"
+                       accept=".jpg,.jpeg,.png,.webp"
+                       class="form-control"
+                       id="ImageFile" />
+
+                <span asp-validation-for="ImageFile"
+                      class="text-danger small"></span>
+
+                <div class="form-hint">
+                    Hỗ trợ JPG, JPEG, PNG, WEBP. Kích thước tối đa 5 MB.
+                </div>
+
+                <div class="image-preview" id="imagePreview">
+                    <img id="previewImage" src="" alt="Xem trước hình ảnh" />
+                </div>
+
+            </div>
+        </div>
+
+        <!-- NÚT THAO TÁC -->
+        <div class="product-form-actions">
+
+            <a asp-area="Store"
+               asp-controller="Product"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i>
+                Hủy và quay lại
+            </a>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-circle"></i>
+                Lưu sản phẩm
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const imageInput = document.getElementById("ImageFile");
+        const preview = document.getElementById("imagePreview");
+        const previewImage = document.getElementById("previewImage");
+
+        imageInput.addEventListener("change", function () {
+
+            const file = this.files[0];
+
+            if (!file) {
+                preview.style.display = "none";
+                previewImage.src = "";
+                return;
+            }
+
+            const allowedTypes = [
+                "image/jpeg",
+                "image/png",
+                "image/webp"
+            ];
+
+            if (!allowedTypes.includes(file.type)) {
+                alert("Vui lòng chọn ảnh JPG, JPEG, PNG hoặc WEBP.");
+                this.value = "";
+                preview.style.display = "none";
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                alert("Dung lượng ảnh không được vượt quá 5 MB.");
+                this.value = "";
+                preview.style.display = "none";
+                return;
+            }
+
+            previewImage.src = URL.createObjectURL(file);
+            preview.style.display = "block";
+        });
+
+    });
+</script>

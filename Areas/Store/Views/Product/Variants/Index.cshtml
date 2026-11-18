@@ -1,0 +1,630 @@
+﻿@model IEnumerable<TechMarket.Models.ProductVariant>
+
+@{
+    ViewData["Title"] = "Quản lý biến thể";
+
+    var product = ViewBag.Product as TechMarket.Models.Product;
+    var variants = Model?.ToList() ?? new List<TechMarket.Models.ProductVariant>();
+
+    int totalVariants = variants.Count;
+    int activeVariants = variants.Count(v => v.IsActive);
+    int hiddenVariants = variants.Count(v => !v.IsActive);
+    int totalStock = variants.Where(v => v.IsActive).Sum(v => v.Quantity);
+}
+
+<style>
+    .variant-page {
+        padding: 20px 0 40px;
+    }
+
+    .variant-hero {
+        background: linear-gradient(120deg, #172554, #2563eb);
+        color: white;
+        padding: 30px;
+        border-radius: 18px;
+        margin-bottom: 25px;
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
+    }
+
+        .variant-hero h2 {
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .variant-hero p {
+            color: rgba(255,255,255,.8);
+            margin-bottom: 0;
+        }
+
+        .variant-hero .btn {
+            font-weight: 600;
+            border-radius: 9px;
+            padding: 10px 18px;
+        }
+
+    .variant-stat {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 20px;
+        height: 100%;
+        box-shadow: 0 3px 12px rgba(0,0,0,.03);
+    }
+
+        .variant-stat .stat-label {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .variant-stat .stat-number {
+            font-size: 27px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .variant-stat .stat-icon {
+            width: 43px;
+            height: 43px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+    .variant-panel {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,.035);
+    }
+
+    .variant-panel-header {
+        padding: 20px 22px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+        .variant-panel-header h5 {
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #1e293b;
+        }
+
+    .variant-toolbar {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding: 18px 22px;
+    }
+
+        .variant-toolbar .form-control,
+        .variant-toolbar .form-select {
+            border-radius: 9px;
+            min-height: 42px;
+        }
+
+    .variant-table {
+        margin-bottom: 0;
+    }
+
+        .variant-table thead th {
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            padding: 15px;
+            white-space: nowrap;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .variant-table tbody td {
+            padding: 16px 15px;
+            vertical-align: middle;
+            color: #334155;
+        }
+
+        .variant-table tbody tr:hover {
+            background: #f8fbff;
+        }
+
+    .sku-code {
+        display: inline-block;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-weight: 700;
+        padding: 7px 10px;
+        border-radius: 7px;
+        font-size: 13px;
+    }
+
+    .size-label {
+        display: inline-block;
+        min-width: 38px;
+        text-align: center;
+        padding: 6px 10px;
+        border: 1px solid #dbeafe;
+        background: #eff6ff;
+        color: #1e40af;
+        border-radius: 7px;
+        font-weight: 700;
+    }
+
+    .color-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-weight: 500;
+    }
+
+    .stock-number {
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .status-active {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .status-hidden {
+        background: #f1f5f9;
+        color: #64748b;
+    }
+
+    .status-active,
+    .status-hidden {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .variant-action {
+        display: flex;
+        gap: 7px;
+        align-items: center;
+    }
+
+        .variant-action .btn {
+            border-radius: 7px;
+            white-space: nowrap;
+        }
+
+    .variant-empty {
+        padding: 55px 20px !important;
+        text-align: center;
+        color: #64748b;
+    }
+
+        .variant-empty i {
+            display: block;
+            font-size: 42px;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+        }
+
+    .variant-footer {
+        padding: 18px 22px;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    @@media (max-width: 768px) {
+        .variant-hero {
+            padding: 22px;
+        }
+
+            .variant-hero .hero-actions {
+                margin-top: 18px;
+            }
+
+        .variant-toolbar > * {
+            width: 100%;
+        }
+
+        .variant-footer {
+            align-items: stretch;
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="container-fluid variant-page">
+
+    <!-- HEADER -->
+    <div class="variant-hero">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="mb-2">
+                    <span class="badge bg-light text-primary">
+                        <i class="bi bi-shop"></i> QUẢN LÝ CỬA HÀNG
+                    </span>
+                </div>
+
+                <h2>
+                    <i class="bi bi-boxes"></i>
+                    Quản lý biến thể sản phẩm
+                </h2>
+
+                <p>
+                    Sản phẩm:
+                    <strong>@(product?.Name ?? "Không xác định")</strong>
+                </p>
+
+                <p class="mt-2">
+                    Quản lý kích cỡ, màu sắc, SKU và số lượng tồn kho của từng biến thể.
+                </p>
+            </div>
+
+
+            <div class="col-lg-4 text-lg-end hero-actions">
+
+                <div class="d-flex flex-wrap justify-content-lg-end gap-2">
+
+                    <a asp-area="Store"
+                       asp-controller="Dashboard"
+                       asp-action="Index"
+                       class="btn btn-outline-light">
+                        <i class="bi bi-house-door-fill"></i>
+                        Dashboard
+                    </a>
+
+                    <a asp-area="Store"
+                       asp-controller="Product"
+                       asp-action="Index"
+                       class="btn btn-outline-light">
+                        <i class="bi bi-arrow-left"></i>
+                        Quay lại
+                    </a>
+
+                    <a asp-area="Store"
+                       asp-controller="Product"
+                       asp-action="CreateVariant"
+                       asp-route-productId="@product?.Id"
+                       class="btn btn-warning">
+                        <i class="bi bi-plus-lg"></i>
+                        Thêm biến thể
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- THÔNG BÁO -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            @TempData["Success"]
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- THỐNG KÊ -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-xl-3 col-md-6">
+            <div class="variant-stat">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-label">Tổng biến thể</div>
+                        <div class="stat-number">@totalVariants</div>
+                    </div>
+                    <div class="stat-icon bg-primary-subtle text-primary">
+                        <i class="bi bi-boxes"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="variant-stat">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-label">Đang bán</div>
+                        <div class="stat-number text-success">@activeVariants</div>
+                    </div>
+                    <div class="stat-icon bg-success-subtle text-success">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="variant-stat">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-label">Đã ẩn</div>
+                        <div class="stat-number text-secondary">@hiddenVariants</div>
+                    </div>
+                    <div class="stat-icon bg-secondary-subtle text-secondary">
+                        <i class="bi bi-eye-slash"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="variant-stat">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-label">Tổng tồn kho đang bán</div>
+                        <div class="stat-number text-primary">@totalStock</div>
+                    </div>
+                    <div class="stat-icon bg-primary-subtle text-primary">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- DANH SÁCH BIẾN THỂ -->
+    <div class="variant-panel">
+
+        <div class="variant-panel-header">
+            <h5>
+                <i class="bi bi-list-ul text-primary me-2"></i>
+                Danh sách biến thể
+            </h5>
+            <small class="text-muted">
+                Danh sách kích cỡ, màu sắc và mã SKU của sản phẩm
+            </small>
+        </div>
+
+        <!-- TÌM KIẾM VÀ LỌC -->
+        <div class="variant-toolbar">
+
+            <div class="flex-grow-1">
+                <div class="input-group">
+                    <span class="input-group-text bg-white">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text"
+                           id="variantSearch"
+                           class="form-control"
+                           placeholder="Tìm theo SKU, kích cỡ hoặc màu sắc..." />
+                </div>
+            </div>
+
+            <div style="min-width: 190px;">
+                <select id="statusFilter" class="form-select">
+                    <option value="all">Tất cả trạng thái</option>
+                    <option value="active">Đang bán</option>
+                    <option value="hidden">Đã ẩn</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="table-responsive">
+            <table class="table variant-table align-middle">
+
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">STT</th>
+                        <th>Mã SKU</th>
+                        <th>Kích cỡ</th>
+                        <th>Màu sắc</th>
+                        <th>Tồn kho</th>
+                        <th>Trạng thái</th>
+                        <th style="min-width: 180px;">Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody id="variantTableBody">
+
+                    @if (variants.Any())
+                    {
+                        int index = 1;
+
+                        @foreach (var item in variants)
+                        {
+                            <tr class="variant-row"
+                                data-status="@(item.IsActive ? "active" : "hidden")"
+                                data-search="@($"{item.SKU} {item.Size} {item.Color}")">
+
+                                <td class="text-muted">
+                                    @index
+                                </td>
+
+                                <td>
+                                    <span class="sku-code">
+                                        @item.SKU
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="size-label">
+                                        @item.Size
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="color-label">
+                                        <i class="bi bi-palette"></i>
+                                        @item.Color
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="stock-number">
+                                        @item.Quantity
+                                    </span>
+                                    <small class="text-muted"> sản phẩm</small>
+                                </td>
+
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="status-active">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            Đang bán
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-hidden">
+                                            <i class="bi bi-eye-slash"></i>
+                                            Đã ẩn
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <div class="variant-action">
+
+                                        <a asp-area="Store"
+                                           asp-controller="Product"
+                                           asp-action="EditVariant"
+                                           asp-route-id="@item.Id"
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-pencil-square"></i>
+                                            Sửa
+                                        </a>
+
+                                        <form asp-area="Store"
+                                              asp-controller="Product"
+                                              asp-action="ToggleVariantStatus"
+                                              method="post"
+                                              class="d-inline"
+                                              onsubmit="return confirm('Bạn có chắc muốn @(item.IsActive ? "ẩn" : "hiện") biến thể này không?');">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="id"
+                                                   value="@item.Id" />
+
+                                            <button type="submit"
+                                                    class="btn btn-outline-secondary btn-sm">
+                                                @if (item.IsActive)
+                                                {
+                                                    <i class="bi bi-eye-slash"></i>
+                                                    <span>Ẩn</span>
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-eye"></i>
+                                                    <span>Hiện</span>
+                                                }
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </td>
+                            </tr>
+
+                            index++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="variant-empty">
+                                <i class="bi bi-box-seam"></i>
+                                <strong>Chưa có biến thể nào</strong>
+                                <p class="mb-3">
+                                    Hãy thêm biến thể đầu tiên cho sản phẩm này.
+                                </p>
+
+                                <a asp-area="Store"
+                                   asp-controller="Product"
+                                   asp-action="CreateVariant"
+                                   asp-route-productId="@product?.Id"
+                                   class="btn btn-primary btn-sm">
+                                    <i class="bi bi-plus-lg"></i>
+                                    Thêm biến thể
+                                </a>
+                            </td>
+                        </tr>
+                    }
+
+                    <tr id="noSearchResult" style="display:none;">
+                        <td colspan="7" class="variant-empty">
+                            <i class="bi bi-search"></i>
+                            Không tìm thấy biến thể phù hợp.
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="variant-footer">
+            <div class="text-muted small">
+                Hiển thị <strong id="visibleCount">@totalVariants</strong>
+                / @totalVariants biến thể
+            </div>
+
+            <a asp-area="Store"
+               asp-controller="Product"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i>
+                Quay lại danh sách sản phẩm
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const searchInput = document.getElementById("variantSearch");
+        const statusFilter = document.getElementById("statusFilter");
+        const rows = document.querySelectorAll(".variant-row");
+        const noResult = document.getElementById("noSearchResult");
+        const visibleCount = document.getElementById("visibleCount");
+
+        function filterVariants() {
+
+            const keyword = searchInput.value.trim().toLowerCase();
+            const status = statusFilter.value;
+
+            let count = 0;
+
+            rows.forEach(row => {
+
+                const searchText = row.dataset.search.toLowerCase();
+                const rowStatus = row.dataset.status;
+
+                const matchKeyword = searchText.includes(keyword);
+                const matchStatus = status === "all" || rowStatus === status;
+
+                if (matchKeyword && matchStatus) {
+                    row.style.display = "";
+                    count++;
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            noResult.style.display = count === 0 && rows.length > 0 ? "" : "none";
+
+            visibleCount.textContent = count;
+        }
+
+        searchInput.addEventListener("input", filterVariants);
+        statusFilter.addEventListener("change", filterVariants);
+
+    });
+</script>

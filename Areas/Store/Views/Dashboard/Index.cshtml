@@ -1,0 +1,324 @@
+﻿@model TechMarket.Models.Store
+
+@{
+    ViewData["Title"] = "Quản lý cửa hàng";
+}
+
+<style>
+    .store-dashboard {
+        padding: 25px 0 45px;
+        background: #f5f7fb;
+        min-height: 85vh;
+    }
+
+    .dashboard-hero {
+        background: linear-gradient(120deg, #172554, #2563eb);
+        color: white;
+        padding: 35px;
+        border-radius: 18px;
+        margin-bottom: 28px;
+        box-shadow: 0 8px 25px rgba(37, 99, 235, .16);
+    }
+
+    .dashboard-hero h2 {
+        font-weight: 750;
+        margin-bottom: 10px;
+    }
+
+    .dashboard-hero p {
+        color: #dbeafe;
+        margin-bottom: 0;
+    }
+
+    .store-status {
+        display: inline-block;
+        padding: 8px 15px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 600;
+        background: rgba(255,255,255,.16);
+        margin-top: 18px;
+    }
+
+    .section-heading {
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 18px;
+    }
+
+    .dashboard-card {
+        display: block;
+        height: 100%;
+        background: white;
+        border: 1px solid #edf0f5;
+        border-radius: 16px;
+        padding: 20px;
+        text-decoration: none;
+        color: #1e293b;
+        transition: all .25s ease;
+        box-shadow: 0 3px 12px rgba(15, 23, 42, .035);
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 28px rgba(15, 23, 42, .10);
+        color: #2563eb;
+        border-color: #bfdbfe;
+    }
+
+    .dashboard-icon {
+        width: 55px;
+        height: 55px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+        margin-bottom: 20px;
+    }
+
+    .icon-blue { background: #dbeafe; color: #2563eb; }
+    .icon-purple { background: #ede9fe; color: #7c3aed; }
+    .icon-orange { background: #ffedd5; color: #ea580c; }
+    .icon-green { background: #dcfce7; color: #16a34a; }
+
+    .dashboard-card h5 {
+        font-weight: 700;
+        margin-bottom: 9px;
+    }
+
+    .dashboard-card p {
+        color: #64748b;
+        font-size: 14px;
+        min-height: 42px;
+        margin-bottom: 18px;
+    }
+
+    .card-link {
+        font-size: 14px;
+        font-weight: 600;
+        color: #2563eb;
+    }
+
+    .store-info-card {
+        background: white;
+        border: 1px solid #edf0f5;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 3px 12px rgba(15, 23, 42, .035);
+    }
+
+    .info-item {
+        padding: 15px 0;
+        border-bottom: 1px solid #edf0f5;
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        color: #64748b;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+    .info-value {
+        color: #1e293b;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    .store-avatar {
+        width: 58px;
+        height: 58px;
+        border-radius: 16px;
+        background: #dbeafe;
+        color: #2563eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 27px;
+    }
+
+    @@media (max-width: 576px) {
+        .dashboard-hero {
+            padding: 25px 20px;
+        }
+
+        .dashboard-card {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="store-dashboard">
+    <div class="container-fluid">
+
+        <!-- Phần chào mừng -->
+        <div class="dashboard-hero">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h2>Xin chào, @Model.StoreName!</h2>
+                    <p>
+                        Chào mừng bạn đến với khu vực quản lý cửa hàng TechMarket.
+                        Hãy quản lý sản phẩm và đơn hàng của bạn tại đây.
+                    </p>
+
+                    <span class="store-status">
+                        @if (Model.IsActive)
+                        {
+                            <i class="bi bi-check-circle-fill me-1"></i>
+                            <text>Cửa hàng đang hoạt động</text>
+                        }
+                        else
+                        {
+                            <i class="bi bi-lock-fill me-1"></i>
+                            <text>Cửa hàng đang bị khóa</text>
+                        }
+                    </span>
+                </div>
+                <div class="mt-4">
+                    <a asp-area=""
+                       asp-controller="Home"
+                       asp-action="Index"
+                       class="btn btn-product">
+                        <i class="bi bi-house-door-fill me-2"></i>
+                        Về trang chủ
+                    </a>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                    <div style="font-size: 75px; opacity: .85;">
+                        <i class="bi bi-shop-window"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Các chức năng quản lý -->
+        <h4 class="section-heading">
+            <i class="bi bi-grid-fill me-2 text-primary"></i>
+            Trung tâm quản lý
+        </h4>
+
+        <div class="row g-2 mb-4">
+
+            <div class="col-md-6 col-xl-4">
+                <a asp-area="Store"
+                   asp-controller="Product"
+                   asp-action="Index"
+                   class="dashboard-card">
+                    <div class="dashboard-icon icon-blue">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                    <h5>Quản lý sản phẩm</h5>
+                    <p>Thêm, chỉnh sửa, cập nhật giá và quản lý danh sách sản phẩm.</p>
+                    <span class="card-link">
+                        Truy cập quản lý <i class="bi bi-arrow-right ms-1"></i>
+                    </span>
+                </a>
+            </div>
+
+            <div class="col-md-6 col-xl-4">
+                <a asp-area="Store"
+                   asp-controller="Product"
+                   asp-action="Index"
+                   class="dashboard-card">
+                    <div class="dashboard-icon icon-purple">
+                        <i class="bi bi-palette"></i>
+                    </div>
+                    <h5>Quản lý biến thể</h5>
+                    <p>Quản lý SKU, kích thước, màu sắc và số lượng tồn kho của từng sản phẩm.</p>
+                    <span class="card-link">
+                        Chọn sản phẩm để quản lý <i class="bi bi-arrow-right ms-1"></i>
+                    </span>
+                </a>
+            </div>
+
+            <div class="col-md-6 col-xl-4">
+                <a asp-area="Store"
+                   asp-controller="Order"
+                   asp-action="Index"
+                   class="dashboard-card">
+                    <div class="dashboard-icon icon-orange">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+                    <h5>Quản lý đơn hàng</h5>
+                    <p>Theo dõi đơn hàng có sản phẩm thuộc cửa hàng và xem thông tin khách mua.</p>
+                    <span class="card-link">
+                        Xem đơn hàng <i class="bi bi-arrow-right ms-1"></i>
+                    </span>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Thông tin cửa hàng -->
+        <h4 class="section-heading mt-4">
+            <i class="bi bi-shop me-2 text-primary"></i>
+            Thông tin cửa hàng
+        </h4>
+
+        <div class="store-info-card">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="store-avatar">
+                    <i class="bi bi-shop"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold mb-1">@Model.StoreName</h5>
+                    <span class="text-muted small">
+                        Cửa hàng trên hệ thống TechMarket
+                    </span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="info-item">
+                        <div class="info-label">Tên cửa hàng</div>
+                        <div class="info-value">@Model.StoreName</div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="info-item">
+                        <div class="info-label">Số điện thoại</div>
+                        <div class="info-value">
+                            @(string.IsNullOrWhiteSpace(Model.Phone) ? "Chưa cập nhật" : Model.Phone)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="info-item">
+                        <div class="info-label">Địa chỉ</div>
+                        <div class="info-value">
+                            @(string.IsNullOrWhiteSpace(Model.Address) ? "Chưa cập nhật" : Model.Address)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="info-item">
+                        <div class="info-label">Ngày tạo cửa hàng</div>
+                        <div class="info-value">
+                            @Model.CreatedAt.ToString("dd/MM/yyyy")
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="info-item">
+                        <div class="info-label">Mô tả cửa hàng</div>
+                        <div class="info-value">
+                            @(string.IsNullOrWhiteSpace(Model.Description)
+                                ? "Chưa có mô tả"
+                                : Model.Description)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
